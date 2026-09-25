@@ -29,7 +29,7 @@ export const QrPaymentsPage: React.FC<QrPaymentsPageProps> = ({ onNavigate }) =>
   const [amount, setAmount] = useState('1499.00');
   const [description, setDescription] = useState('Order #ORD-8829 - Coffee & Bakery');
   const [merchantVpa] = useState('payflow.acme@hdfcbank');
-  const [status, setStatus] = useState<'PENDING' | 'CAPTURED'>('PENDING');
+  const [status, setStatus] = useState<'PENDING' | 'CAPTURED' | 'FAILED'>('PENDING');
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
   const [activePaymentId, setActivePaymentId] = useState(`pay_qr_${Math.random().toString(36).substring(2, 9)}`);
 
@@ -38,7 +38,7 @@ export const QrPaymentsPage: React.FC<QrPaymentsPageProps> = ({ onNavigate }) =>
 
   // Expiry countdown timer
   useEffect(() => {
-    if (status === 'CAPTURED') return;
+    if (status !== 'PENDING') return;
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
@@ -76,8 +76,8 @@ export const QrPaymentsPage: React.FC<QrPaymentsPageProps> = ({ onNavigate }) =>
         method: 'UPI',
         subMethod: 'BharatQR Dynamic',
         payerVpa: 'priya.nair@okhdfcbank',
-        provider: 'PayFlow Direct UPI',
-        providerPaymentId: `npci_${Math.random().toString(36).substring(2, 10)}`,
+        provider: 'PayFlow Sandbox',
+        providerPaymentId: `sandbox_${Math.random().toString(36).substring(2, 10)}`,
         acquirerRrn: `${Math.floor(100000000000 + Math.random() * 900000000000)}`,
         riskScore: 6,
         riskVerdict: 'Auto-Approved (Low)',
@@ -92,11 +92,19 @@ export const QrPaymentsPage: React.FC<QrPaymentsPageProps> = ({ onNavigate }) =>
           totalOrders: 1
         },
         idempotencyKey: `idem_qr_${Date.now()}`,
-        settlementProtocol: 'NPCI UPI 2.0 (Direct)',
+        settlementProtocol: 'Provider-confirmed UPI',
         sourceIp: '157.34.12.8',
         location: 'Mumbai, IN'
       });
     }, 1500);
+  };
+
+  const handleSimulateFailure = () => {
+    showToast('Simulating provider-declined QR payment...', 'info');
+    setTimeout(() => {
+      setStatus('FAILED');
+      showToast('Provider reported the payment as failed.', 'error');
+    }, 900);
   };
 
   const handleResetQR = () => {
@@ -121,11 +129,11 @@ export const QrPaymentsPage: React.FC<QrPaymentsPageProps> = ({ onNavigate }) =>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
             Dynamic UPI &amp; BharatQR Generator
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-semibold border border-emerald-500/20">
-              UPI 2.0 Real-time Polling
+              Provider-confirmed QR
             </span>
           </h1>
           <p className="text-sm text-slate-500 mt-0.5">
-            Zero-terminal in-store and POS billing QR with instant webhook dispatch and acoustic transaction confirmation.
+            Generate a fixed-amount UPI QR and keep the payment pending until a verified provider event confirms the result.
           </p>
         </div>
 
@@ -201,16 +209,25 @@ export const QrPaymentsPage: React.FC<QrPaymentsPageProps> = ({ onNavigate }) =>
             </div>
 
             <div className="mt-6 pt-4 border-t border-slate-100">
-              <button
-                onClick={handleSimulatePayment}
-                disabled={status === 'CAPTURED'}
-                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl text-xs font-semibold shadow-sm shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01]"
-              >
-                <Zap className="w-4 h-4" />
-                Simulate Customer Scan &amp; Pay
-              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button
+                  onClick={handleSimulatePayment}
+                  disabled={status !== 'PENDING'}
+                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl text-xs font-semibold shadow-sm shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01]"
+                >
+                  <Zap className="w-4 h-4" />
+                  Simulate Success
+                </button>
+                <button
+                  onClick={handleSimulateFailure}
+                  disabled={status !== 'PENDING'}
+                  className="w-full py-3 bg-rose-50 hover:bg-rose-100 disabled:opacity-40 disabled:cursor-not-allowed text-rose-700 border border-rose-200 rounded-xl text-xs font-semibold transition-all"
+                >
+                  Simulate Failure
+                </button>
+              </div>
               <p className="text-[10px] text-slate-400 text-center mt-2">
-                Triggers NPCI callback and real-time ledger credit.
+                Demo only: simulates provider-confirmed outcomes. The real backend remains authoritative.
               </p>
             </div>
           </div>
@@ -250,6 +267,15 @@ export const QrPaymentsPage: React.FC<QrPaymentsPageProps> = ({ onNavigate }) =>
                   </div>
                   <div className="text-base font-bold text-slate-900">Payment Received!</div>
                   <div className="text-xs font-mono text-emerald-600 font-semibold mt-1">₹{amount} CAPTURED</div>
+                  <div className="text-[10px] text-slate-400 mt-1">Ref: {activePaymentId}</div>
+                </div>
+              ) : status === 'FAILED' ? (
+                <div className="text-center animate-fadeIn">
+                  <div className="w-16 h-16 rounded-full bg-rose-500/10 text-rose-600 flex items-center justify-center mx-auto mb-3 border border-rose-500/30">
+                    <span className="text-2xl font-black">!</span>
+                  </div>
+                  <div className="text-base font-bold text-slate-900">Payment Failed</div>
+                  <div className="text-xs font-mono text-rose-600 font-semibold mt-1">Provider declined or could not complete the payment</div>
                   <div className="text-[10px] text-slate-400 mt-1">Ref: {activePaymentId}</div>
                 </div>
               ) : (
