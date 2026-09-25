@@ -351,7 +351,7 @@ export const CreatePaymentPage: React.FC<CreatePaymentPageProps> = ({
                   />
                   <div className="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1">
                     <Lock className="w-3 h-3 text-blue-600" />
-                    PCI-DSS Level 1 vault tokenization active.
+                    Provider-tokenized payment data only; raw card data is not stored by PayFlow.
                   </div>
                 </div>
               )}
@@ -454,7 +454,7 @@ export const CreatePaymentPage: React.FC<CreatePaymentPageProps> = ({
                     className="text-blue-600 focus:ring-blue-500"
                   />
                   <div>
-                    <span className="font-semibold text-slate-800">PayFlow Direct NPCI Rail</span>
+                    <span className="font-semibold text-slate-800">PayFlow Sandbox</span>
                     <p className="text-[10px] text-slate-400">Zero interchange fee UPI 2.0</p>
                   </div>
                 </label>
