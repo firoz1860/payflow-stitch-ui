@@ -217,7 +217,7 @@ export const MOCK_AUDIT_TRAIL: AuditStep[] = [
     title: 'Customer MPIN Authorization Commenced',
     service: 'Provider UPI Rail',
     timestamp: '10:21:40.890 IST (+28.4s)',
-    description: 'Provider reported that customer authorization completed. PayFlow does not receive or store the customer's UPI PIN.'
+    description: "Provider reported that customer authorization completed. PayFlow does not receive or store the customer's UPI PIN."
   },
   {
     id: 'step_6',
