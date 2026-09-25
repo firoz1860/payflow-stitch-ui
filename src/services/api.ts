@@ -215,9 +215,9 @@ export const MOCK_AUDIT_TRAIL: AuditStep[] = [
   {
     id: 'step_5',
     title: 'Customer MPIN Authorization Commenced',
-    service: 'NPCI UPI Switch',
+    service: 'Provider UPI Rail',
     timestamp: '10:21:40.890 IST (+28.4s)',
-    description: 'Customer entered 6-digit MPIN in banking app. NPCI routed debited hold from HDFC Bank to beneficiary clearing settlement pool.'
+    description: 'Provider reported that customer authorization completed. PayFlow does not receive or store the customer's UPI PIN.'
   },
   {
     id: 'step_6',
@@ -647,7 +647,7 @@ export const MOCK_NODES: ServiceNode[] = [
   {
     id: 'provider_proxy',
     name: 'Provider Proxy',
-    fileOrRoute: 'Razorpay / NPCI Relay',
+    fileOrRoute: 'Razorpay / provider rail',
     status: 'DEGRADED',
     metrics: {
       label1: 'Success Ratio',
