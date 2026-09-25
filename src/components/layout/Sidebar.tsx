@@ -218,13 +218,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => 
           <span className="font-mono text-[11px] font-medium truncate">Health view enabled</span>
         </div>
 
-        {/* PCI-DSS Badge */}
+        {/* Security controls badge */}
         <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/70 border border-slate-200/60 text-[11px]">
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
             <div>
-              <p className="font-semibold text-slate-800 leading-tight">PCI-DSS Level 1</p>
-              <p className="text-[10px] text-slate-400 leading-tight">SOC2 Type II</p>
+              <p className="font-semibold text-slate-800 leading-tight">Security controls</p>
+              <p className="text-[10px] text-slate-400 leading-tight">JWT • API keys • HMAC</p>
             </div>
           </div>
           <span className="font-mono text-[10px] font-semibold text-blue-700 bg-blue-100/60 px-1.5 py-0.5 rounded">Configured</span>
