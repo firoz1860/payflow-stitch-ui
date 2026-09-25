@@ -1,0 +1,6 @@
+{
+  "name": "PayFlow - Payment Orchestration & Ledger Engine",
+  "description": "High-trust payment orchestration platform with distributed audit trails, double-entry ledger postings, telemetry monitoring, and developer tool suite.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
