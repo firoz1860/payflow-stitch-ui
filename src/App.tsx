@@ -78,8 +78,6 @@ export default function App() {
           currentPage={currentPage}
           onNavigate={handleNavigate}
           env={env}
-          mobileOpen={isMobileNavOpen}
-          onMobileClose={() => setIsMobileNavOpen(false)}
         />
 
         <div className="px-4 lg:pl-72 lg:pr-6 pt-4 pb-12 transition-all duration-300">
@@ -87,7 +85,6 @@ export default function App() {
             env={env}
             onToggleEnv={setEnv}
             onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
-            onOpenMobileNav={() => setIsMobileNavOpen(true)}
             onNavigate={handleNavigate}
           />
 
