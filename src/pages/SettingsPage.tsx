@@ -43,10 +43,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
   };
 
   const handleRollKey = () => {
-    showToast('Generating new API key pair with 24-hour sunset overlap...', 'info');
-    setTimeout(() => {
-      showToast('New API key active: sk_live_994821_payflow_secret', 'success');
-    }, 1000);
+    showToast('Create or rotate keys from the dedicated API Keys page. Existing secrets are never revealed.', 'info');
   };
 
   return (
@@ -98,24 +95,8 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">Secret Key (Server-side)</label>
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 font-mono text-xs text-slate-900 flex items-center justify-between">
-              <span>
-                {showSecretKey
-                  ? `sk_${env.toLowerCase()}_982310_payflow_secret_key`
-                  : 'sk_' + env.toLowerCase() + '_••••••••••••••••••••••••••••••••'}
-              </span>
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setShowSecretKey(!showSecretKey)}
-                  className="p-1.5 text-slate-400 hover:text-slate-700 rounded-md"
-                >
-                  {showSecretKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                </button>
-                <CopyButton
-                  textToCopy={`sk_${env.toLowerCase()}_982310_payflow_secret_key`}
-                  toastLabel="Secret key copied"
-                />
-              </div>
+              <span>{'sk_' + env.toLowerCase() + '_••••••••••••••••••••••••••••82fc'}</span>
+              <span className="text-[10px] text-slate-400">Existing secrets stay masked</span>
             </div>
           </div>
         </div>
@@ -157,7 +138,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
 
           <div>
             <div className="flex items-center justify-between text-xs font-semibold text-slate-800 mb-1">
-              <span>PayFlow Direct UPI (NPCI Direct Hub)</span>
+              <span>Stripe</span>
               <span className="font-mono">{payflowDirectWeight}%</span>
             </div>
             <input
@@ -172,7 +153,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
 
           <div>
             <div className="flex items-center justify-between text-xs font-semibold text-slate-800 mb-1">
-              <span>Cashfree Payments (Failover Hub)</span>
+              <span>PayFlow Sandbox</span>
               <span className="font-mono">{cashfreeWeight}%</span>
             </div>
             <input
@@ -230,7 +211,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
                   onChange={e => setEnableCircuitBreaker(e.target.checked)}
                   className="rounded text-blue-600 focus:ring-blue-500"
                 />
-                Trip when provider error rate exceeds 5% in 60s
+                Trip when provider error rate exceeds the configured threshold
               </label>
             </div>
           </div>
