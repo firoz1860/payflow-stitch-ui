@@ -28,14 +28,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
   const [showSecretKey, setShowSecretKey] = useState(false);
   const [razorpayWeight, setRazorpayWeight] = useState(70);
   const [payflowDirectWeight, setPayflowDirectWeight] = useState(25);
-  const [cashfreeWeight, setCashfreeWeight] = useState(5);
+  const [sandboxWeight, setSandboxWeight] = useState(5);
   const [idempotencyTtlHours, setIdempotencyTtlHours] = useState(48);
   const [enableCircuitBreaker, setEnableCircuitBreaker] = useState(true);
   const [slackAlertWebhook, setSlackAlertWebhook] = useState('https://hooks.slack.com/services/T00/B00/XXXXX');
 
   const handleSaveRouting = (e: React.FormEvent) => {
     e.preventDefault();
-    if (razorpayWeight + payflowDirectWeight + cashfreeWeight !== 100) {
+    if (razorpayWeight + payflowDirectWeight + sandboxWeight !== 100) {
       showToast('Gateway weights must sum up to exactly 100%', 'error');
       return;
     }
@@ -116,7 +116,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
             <p className="text-xs text-slate-500">Configure split weight distribution for automatic payment routing</p>
           </div>
           <span className="font-mono text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
-            Total: {razorpayWeight + payflowDirectWeight + cashfreeWeight}%
+            Total: {razorpayWeight + payflowDirectWeight + sandboxWeight}%
           </span>
         </div>
 
@@ -154,14 +154,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
           <div>
             <div className="flex items-center justify-between text-xs font-semibold text-slate-800 mb-1">
               <span>PayFlow Sandbox</span>
-              <span className="font-mono">{cashfreeWeight}%</span>
+              <span className="font-mono">{sandboxWeight}%</span>
             </div>
             <input
               type="range"
               min="0"
               max="100"
-              value={cashfreeWeight}
-              onChange={e => setCashfreeWeight(Number(e.target.value))}
+              value={sandboxWeight}
+              onChange={e => setSandboxWeight(Number(e.target.value))}
               className="w-full accent-amber-600"
             />
           </div>
