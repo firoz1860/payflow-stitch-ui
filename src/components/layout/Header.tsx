@@ -33,7 +33,7 @@ export const Header: React.FC<HeaderProps> = ({
     {
       id: '1',
       title: 'Settlement Cleared',
-      desc: '₹2,499.00 settled via Razorpay Direct (RRN 429810294812)',
+      desc: '₹2,499.00 settled via Razorpay (RRN 429810294812)',
       time: '12m ago',
       type: 'success'
     },
