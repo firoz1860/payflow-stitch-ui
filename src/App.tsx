@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ToastProvider } from './context/ToastContext.tsx';
 import { AmbientGlow } from './components/layout/AmbientGlow.tsx';
 import { Sidebar, PageId } from './components/layout/Sidebar.tsx';
@@ -13,6 +13,7 @@ import { DangerZoneModal } from './components/modals/DangerZoneModal.tsx';
 
 // Pages
 import { OverviewPage } from './pages/OverviewPage.tsx';
+import { PaymentsPage } from './pages/PaymentsPage.tsx';
 import { PaymentDetailsPage } from './pages/PaymentDetailsPage.tsx';
 import { LedgerPage } from './pages/LedgerPage.tsx';
 import { AnalyticsPage } from './pages/AnalyticsPage.tsx';
@@ -22,13 +23,15 @@ import { CreatePaymentPage } from './pages/CreatePaymentPage.tsx';
 import { QrPaymentsPage } from './pages/QrPaymentsPage.tsx';
 import { DevelopersPage } from './pages/DevelopersPage.tsx';
 import { WebhooksPage } from './pages/WebhooksPage.tsx';
+import { ApiKeysPage } from './pages/ApiKeysPage.tsx';
 import { SettingsPage } from './pages/SettingsPage.tsx';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<PageId>('payment-details');
+  const [currentPage, setCurrentPage] = useState<PageId>('overview');
   const [activePaymentId, setActivePaymentId] = useState<string>('pay_29381bf4');
-  const [env, setEnv] = useState<'TEST' | 'LIVE'>('LIVE');
+  const [env, setEnv] = useState<'TEST' | 'LIVE'>('TEST');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   // Modal Visibility states
   const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
@@ -39,11 +42,24 @@ export default function App() {
   const [isCreateWebhookOpen, setIsCreateWebhookOpen] = useState(false);
   const [isDangerZoneOpen, setIsDangerZoneOpen] = useState(false);
 
+  useEffect(() => {
+    const handleShortcut = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setIsCommandPaletteOpen(open => !open);
+      }
+    };
+
+    window.addEventListener('keydown', handleShortcut);
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, []);
+
   const handleNavigate = (page: PageId, paymentId?: string) => {
     if (paymentId) {
       setActivePaymentId(paymentId);
     }
     setCurrentPage(page);
+    setIsMobileNavOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -56,36 +72,35 @@ export default function App() {
   return (
     <ToastProvider>
       <div className="min-h-screen bg-slate-50/50 text-slate-800 antialiased font-sans relative selection:bg-blue-600 selection:text-white">
-        {/* Glassmorphic Ambient Mesh Gradient */}
         <AmbientGlow />
 
-        {/* Global Fixed Sidebar Navigation */}
         <Sidebar
           currentPage={currentPage}
           onNavigate={handleNavigate}
           env={env}
+          mobileOpen={isMobileNavOpen}
+          onMobileClose={() => setIsMobileNavOpen(false)}
         />
 
-        {/* Main Content Area (Offset for sidebar: pl-72) */}
-        <div className="pl-72 pr-6 pt-4 pb-12 transition-all duration-300">
-          {/* Top Bar Header */}
+        <div className="px-4 lg:pl-72 lg:pr-6 pt-4 pb-12 transition-all duration-300">
           <Header
             env={env}
-            onToggleEnv={() => setEnv(prev => (prev === 'LIVE' ? 'TEST' : 'LIVE'))}
+            onToggleEnv={setEnv}
             onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+            onOpenMobileNav={() => setIsMobileNavOpen(true)}
             onNavigate={handleNavigate}
           />
 
-          {/* Main Dynamic Page Viewport */}
-          <main className="mt-6">
+          <main className="mt-24 lg:mt-6">
             {currentPage === 'overview' && (
-              <OverviewPage
-                onNavigate={handleNavigate}
-                onOpenRefund={handleOpenRefund}
-              />
+              <OverviewPage onNavigate={handleNavigate} onOpenRefund={handleOpenRefund} />
             )}
 
-            {(currentPage === 'payment-details' || currentPage === 'payments') && (
+            {currentPage === 'payments' && (
+              <PaymentsPage onNavigate={handleNavigate} onOpenRefund={handleOpenRefund} />
+            )}
+
+            {currentPage === 'payment-details' && (
               <PaymentDetailsPage
                 paymentId={activePaymentId}
                 onNavigate={handleNavigate}
@@ -94,68 +109,42 @@ export default function App() {
             )}
 
             {currentPage === 'transactions' && (
-              <TransactionsPage
-                onNavigate={handleNavigate}
-                onOpenRefund={handleOpenRefund}
-              />
+              <TransactionsPage onNavigate={handleNavigate} onOpenRefund={handleOpenRefund} />
             )}
 
             {currentPage === 'ledger' && (
-              <LedgerPage
-                onOpenManualPosting={() => setIsManualPostingOpen(true)}
-              />
+              <LedgerPage onOpenManualPosting={() => setIsManualPostingOpen(true)} />
             )}
 
-            {currentPage === 'analytics' && (
-              <AnalyticsPage
-                onNavigate={handleNavigate}
-              />
-            )}
-
-            {currentPage === 'monitoring' && (
-              <MonitoringPage />
-            )}
+            {currentPage === 'analytics' && <AnalyticsPage onNavigate={handleNavigate} />}
+            {currentPage === 'monitoring' && <MonitoringPage />}
 
             {currentPage === 'create-payment' && (
-              <CreatePaymentPage
-                onNavigate={handleNavigate}
-                env={env}
-              />
+              <CreatePaymentPage onNavigate={handleNavigate} env={env} />
             )}
 
-            {currentPage === 'qr-payments' && (
-              <QrPaymentsPage
-                onNavigate={handleNavigate}
-              />
-            )}
-
-            {currentPage === 'developers' && (
-              <DevelopersPage />
-            )}
+            {currentPage === 'qr-payments' && <QrPaymentsPage onNavigate={handleNavigate} />}
+            {currentPage === 'developers' && <DevelopersPage />}
 
             {currentPage === 'webhooks' && (
-              <WebhooksPage
-                onOpenCreateWebhook={() => setIsCreateWebhookOpen(true)}
-              />
+              <WebhooksPage onOpenCreateWebhook={() => setIsCreateWebhookOpen(true)} />
             )}
 
-            {(currentPage === 'settings' || currentPage === 'api-keys') && (
-              <SettingsPage
-                onOpenDangerZone={() => setIsDangerZoneOpen(true)}
-                env={env}
-              />
+            {currentPage === 'api-keys' && <ApiKeysPage env={env} />}
+
+            {currentPage === 'settings' && (
+              <SettingsPage onOpenDangerZone={() => setIsDangerZoneOpen(true)} env={env} />
             )}
           </main>
         </div>
 
-        {/* Command Palette (⌘K) Modal */}
         <CommandPalette
           isOpen={isCommandPaletteOpen}
           onClose={() => setIsCommandPaletteOpen(false)}
           onNavigate={handleNavigate}
+          onSelectPayment={setActivePaymentId}
         />
 
-        {/* Action Modals */}
         <RefundModal
           isOpen={isRefundModalOpen}
           onClose={() => setIsRefundModalOpen(false)}
