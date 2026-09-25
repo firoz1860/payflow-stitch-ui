@@ -54,9 +54,32 @@ export const Header: React.FC<HeaderProps> = ({
   ];
 
   return (
-    <header className="fixed top-4 right-4 left-[18rem] h-16 bg-white/80 backdrop-blur-2xl rounded-2xl z-40 flex items-center justify-between px-6 border border-white/80 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)]">
+    <header className="fixed top-4 right-4 left-4 lg:left-[18rem] h-16 bg-white/80 backdrop-blur-2xl rounded-2xl z-40 flex items-center justify-between px-6 border border-white/80 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)]">
       {/* Left: Organization & Global Quick Search */}
-      <div className="flex items-center gap-4 flex-1 max-w-2xl">
+      <div className="flex items-center gap-2 sm:gap-4 flex-1 max-w-2xl">
+        <select
+          aria-label="Mobile navigation"
+          defaultValue=""
+          onChange={e => {
+            if (e.target.value) onNavigate(e.target.value as PageId);
+            e.currentTarget.value = '';
+          }}
+          className="lg:hidden max-w-[120px] px-2 py-1.5 rounded-lg bg-slate-100/80 border border-slate-200 text-xs font-semibold text-slate-700"
+        >
+          <option value="" disabled>Navigate</option>
+          <option value="overview">Overview</option>
+          <option value="payments">Payments</option>
+          <option value="create-payment">Create Payment</option>
+          <option value="qr-payments">QR Payments</option>
+          <option value="transactions">Transactions</option>
+          <option value="ledger">Ledger</option>
+          <option value="api-keys">API Keys</option>
+          <option value="webhooks">Webhooks</option>
+          <option value="analytics">Analytics</option>
+          <option value="monitoring">Monitoring</option>
+          <option value="developers">Developers</option>
+          <option value="settings">Settings</option>
+        </select>
         {/* Org Selector Dropdown */}
         <div className="relative">
           <button
@@ -108,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Global Search Bar */}
-        <div className="relative flex-1">
+        <div className="relative flex-1 hidden sm:block">
           <button
             type="button"
             onClick={onOpenCommandPalette}
@@ -159,7 +182,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           type="button"
           onClick={() => onNavigate('developers')}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100/80 hover:bg-slate-200/80 text-slate-700 text-xs font-medium transition-colors"
+          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100/80 hover:bg-slate-200/80 text-slate-700 text-xs font-medium transition-colors"
         >
           <BookOpen className="w-3.5 h-3.5 text-slate-500" />
           <span>Docs</span>
