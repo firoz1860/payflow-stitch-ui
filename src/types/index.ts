@@ -8,12 +8,9 @@ export type EnvironmentMode = 'TEST' | 'LIVE';
 export type PaymentMethodType = 'UPI' | 'CARD' | 'NETBANKING' | 'QR' | 'WALLET';
 export type ProviderType =
   | 'Razorpay'
-  | 'Cashfree'
   | 'Stripe'
   | 'PayFlow Sandbox'
   | 'Fallback Switch'
-  | 'PayFlow Direct UPI'
-  | 'PayFlow Direct NPCI Rail'
   | (string & {});
 
 export interface PaymentItem {
