@@ -56,7 +56,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => 
   };
 
   return (
-    <aside className="fixed left-4 top-4 bottom-4 w-64 bg-white/80 backdrop-blur-2xl rounded-2xl z-50 flex flex-col border border-white/80 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)]">
+    <aside className="hidden lg:flex fixed left-4 top-4 bottom-4 w-64 bg-white/80 backdrop-blur-2xl rounded-2xl z-50 flex-col border border-white/80 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)]">
       {/* Brand Header */}
       <div className="h-16 px-4 flex items-center justify-between border-b border-slate-100/80">
         <button
@@ -215,19 +215,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => 
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
           </span>
-          <span className="font-mono text-[11px] font-medium truncate">All systems operational</span>
+          <span className="font-mono text-[11px] font-medium truncate">Health view enabled</span>
         </div>
 
-        {/* PCI-DSS Badge */}
+        {/* Security controls badge */}
         <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/70 border border-slate-200/60 text-[11px]">
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
             <div>
-              <p className="font-semibold text-slate-800 leading-tight">PCI-DSS Level 1</p>
-              <p className="text-[10px] text-slate-400 leading-tight">SOC2 Type II</p>
+              <p className="font-semibold text-slate-800 leading-tight">Security controls</p>
+              <p className="text-[10px] text-slate-400 leading-tight">JWT • API keys • HMAC</p>
             </div>
           </div>
-          <span className="font-mono text-[10px] font-semibold text-emerald-700 bg-emerald-100/60 px-1.5 py-0.5 rounded">Active</span>
+          <span className="font-mono text-[10px] font-semibold text-blue-700 bg-blue-100/60 px-1.5 py-0.5 rounded">Configured</span>
         </div>
 
         {/* Active Merchant Organization */}

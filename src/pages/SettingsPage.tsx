@@ -28,14 +28,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
   const [showSecretKey, setShowSecretKey] = useState(false);
   const [razorpayWeight, setRazorpayWeight] = useState(70);
   const [payflowDirectWeight, setPayflowDirectWeight] = useState(25);
-  const [cashfreeWeight, setCashfreeWeight] = useState(5);
+  const [sandboxWeight, setSandboxWeight] = useState(5);
   const [idempotencyTtlHours, setIdempotencyTtlHours] = useState(48);
   const [enableCircuitBreaker, setEnableCircuitBreaker] = useState(true);
   const [slackAlertWebhook, setSlackAlertWebhook] = useState('https://hooks.slack.com/services/T00/B00/XXXXX');
 
   const handleSaveRouting = (e: React.FormEvent) => {
     e.preventDefault();
-    if (razorpayWeight + payflowDirectWeight + cashfreeWeight !== 100) {
+    if (razorpayWeight + payflowDirectWeight + sandboxWeight !== 100) {
       showToast('Gateway weights must sum up to exactly 100%', 'error');
       return;
     }
@@ -43,10 +43,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
   };
 
   const handleRollKey = () => {
-    showToast('Generating new API key pair with 24-hour sunset overlap...', 'info');
-    setTimeout(() => {
-      showToast('New API key active: sk_live_994821_payflow_secret', 'success');
-    }, 1000);
+    showToast('Create or rotate keys from the dedicated API Keys page. Existing secrets are never revealed.', 'info');
   };
 
   return (
@@ -98,24 +95,8 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">Secret Key (Server-side)</label>
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 font-mono text-xs text-slate-900 flex items-center justify-between">
-              <span>
-                {showSecretKey
-                  ? `sk_${env.toLowerCase()}_982310_payflow_secret_key`
-                  : 'sk_' + env.toLowerCase() + '_••••••••••••••••••••••••••••••••'}
-              </span>
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setShowSecretKey(!showSecretKey)}
-                  className="p-1.5 text-slate-400 hover:text-slate-700 rounded-md"
-                >
-                  {showSecretKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                </button>
-                <CopyButton
-                  textToCopy={`sk_${env.toLowerCase()}_982310_payflow_secret_key`}
-                  toastLabel="Secret key copied"
-                />
-              </div>
+              <span>{'sk_' + env.toLowerCase() + '_••••••••••••••••••••••••••••82fc'}</span>
+              <span className="text-[10px] text-slate-400">Existing secrets stay masked</span>
             </div>
           </div>
         </div>
@@ -135,7 +116,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
             <p className="text-xs text-slate-500">Configure split weight distribution for automatic payment routing</p>
           </div>
           <span className="font-mono text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
-            Total: {razorpayWeight + payflowDirectWeight + cashfreeWeight}%
+            Total: {razorpayWeight + payflowDirectWeight + sandboxWeight}%
           </span>
         </div>
 
@@ -157,7 +138,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
 
           <div>
             <div className="flex items-center justify-between text-xs font-semibold text-slate-800 mb-1">
-              <span>PayFlow Direct UPI (NPCI Direct Hub)</span>
+              <span>Stripe</span>
               <span className="font-mono">{payflowDirectWeight}%</span>
             </div>
             <input
@@ -172,15 +153,15 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
 
           <div>
             <div className="flex items-center justify-between text-xs font-semibold text-slate-800 mb-1">
-              <span>Cashfree Payments (Failover Hub)</span>
-              <span className="font-mono">{cashfreeWeight}%</span>
+              <span>PayFlow Sandbox</span>
+              <span className="font-mono">{sandboxWeight}%</span>
             </div>
             <input
               type="range"
               min="0"
               max="100"
-              value={cashfreeWeight}
-              onChange={e => setCashfreeWeight(Number(e.target.value))}
+              value={sandboxWeight}
+              onChange={e => setSandboxWeight(Number(e.target.value))}
               className="w-full accent-amber-600"
             />
           </div>
@@ -230,7 +211,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onOpenDangerZone, en
                   onChange={e => setEnableCircuitBreaker(e.target.checked)}
                   className="rounded text-blue-600 focus:ring-blue-500"
                 />
-                Trip when provider error rate exceeds 5% in 60s
+                Trip when provider error rate exceeds the configured threshold
               </label>
             </div>
           </div>

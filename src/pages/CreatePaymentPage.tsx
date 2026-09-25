@@ -39,7 +39,7 @@ export const CreatePaymentPage: React.FC<CreatePaymentPageProps> = ({
   const [selectedMethod, setSelectedMethod] = useState<'UPI' | 'CARD' | 'NETBANKING' | 'WALLET'>('UPI');
   const [upiVpa, setUpiVpa] = useState('aditi@okhdfcbank');
   const [cardNumber, setCardNumber] = useState('4242 •••• •••• 4242');
-  const [routingPreference, setRoutingPreference] = useState<'AUTO' | 'RAZORPAY' | 'PAYFLOW_DIRECT' | 'CASHFREE'>('AUTO');
+  const [routingPreference, setRoutingPreference] = useState<'AUTO' | 'RAZORPAY' | 'STRIPE' | 'SANDBOX'>('AUTO');
   const [isProcessing, setIsProcessing] = useState(false);
   const [createdPaymentId, setCreatedPaymentId] = useState<string | null>(null);
 
@@ -78,13 +78,18 @@ export const CreatePaymentPage: React.FC<CreatePaymentPageProps> = ({
         fee: Math.round(numAmount * 0.02),
         netAmount: numAmount - Math.round(numAmount * 0.02),
         currency: 'INR' as const,
-        status: 'CAPTURED' as const,
+        status: 'PENDING' as const,
         env,
         method: selectedMethod,
         subMethod: selectedMethod === 'UPI' ? 'GooglePay' : 'Visa Debit',
         payerVpa: selectedMethod === 'UPI' ? upiVpa : undefined,
-        provider: routingPreference === 'AUTO' ? 'Razorpay' : routingPreference,
-        providerPaymentId: `rzp_${Math.random().toString(36).substring(2, 10)}`,
+        provider:
+          routingPreference === 'AUTO' || routingPreference === 'SANDBOX'
+            ? 'PayFlow Sandbox'
+            : routingPreference === 'RAZORPAY'
+              ? 'Razorpay'
+              : 'Stripe',
+        providerPaymentId: `provider_${Math.random().toString(36).substring(2, 10)}`,
         acquirerRrn: `${Math.floor(100000000000 + Math.random() * 900000000000)}`,
         riskScore: 14,
         riskVerdict: 'Auto-Approved (Low)',
@@ -99,13 +104,13 @@ export const CreatePaymentPage: React.FC<CreatePaymentPageProps> = ({
           totalOrders: 1
         },
         idempotencyKey,
-        settlementProtocol: 'NPCI UPI 2.0 (Direct)',
+        settlementProtocol: 'Provider-confirmed UPI',
         sourceIp: '103.21.244.1',
         location: 'Bengaluru, IN'
       };
 
       MOCK_PAYMENTS.unshift(newEntry);
-      showToast(`Payment ${newPayId} authorized & captured successfully!`, 'success');
+      showToast(`Payment ${newPayId} created and is awaiting provider confirmation.`, 'success');
     }, 1200);
   };
 
@@ -124,7 +129,7 @@ export const CreatePaymentPage: React.FC<CreatePaymentPageProps> = ({
           New Payment Ingress Intent
         </h1>
         <p className="text-sm text-slate-500 mt-0.5">
-          Simulate merchant checkout initiation with smart routing, idempotency hashing, and instant double-entry postings.
+          Create a payment intent with idempotency protection. Financial state changes only after trusted provider confirmation.
         </p>
       </div>
 
@@ -134,9 +139,9 @@ export const CreatePaymentPage: React.FC<CreatePaymentPageProps> = ({
           <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto mb-4 border border-emerald-500/20">
             <CheckCircle2 className="w-8 h-8" />
           </div>
-          <h2 className="text-xl font-bold text-slate-900 mb-1">Payment Authorized &amp; Captured!</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-1">Payment Created — Awaiting Confirmation</h2>
           <p className="text-sm text-slate-600 max-w-md mx-auto mb-6">
-            Payment intent was successfully routed through PayFlow Engine and balanced across double-entry ledger accounts.
+            The payment intent was created successfully. PayFlow will keep it pending until a verified provider confirmation is received.
           </p>
 
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-200/80 rounded-xl font-mono text-sm font-semibold text-slate-900 mb-8">
@@ -159,7 +164,7 @@ export const CreatePaymentPage: React.FC<CreatePaymentPageProps> = ({
               onClick={() => onNavigate('payment-details', createdPaymentId)}
               className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm shadow-blue-500/25 flex items-center gap-1.5 transition-all hover:scale-[1.02]"
             >
-              Audit Distributed Lifecycle
+              View Payment Details
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -346,7 +351,7 @@ export const CreatePaymentPage: React.FC<CreatePaymentPageProps> = ({
                   />
                   <div className="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1">
                     <Lock className="w-3 h-3 text-blue-600" />
-                    PCI-DSS Level 1 vault tokenization active.
+                    Provider-tokenized payment data only; raw card data is not stored by PayFlow.
                   </div>
                 </div>
               )}
@@ -444,12 +449,12 @@ export const CreatePaymentPage: React.FC<CreatePaymentPageProps> = ({
                   <input
                     type="radio"
                     name="routing"
-                    checked={routingPreference === 'PAYFLOW_DIRECT'}
-                    onChange={() => setRoutingPreference('PAYFLOW_DIRECT')}
+                    checked={routingPreference === 'STRIPE'}
+                    onChange={() => setRoutingPreference('STRIPE')}
                     className="text-blue-600 focus:ring-blue-500"
                   />
                   <div>
-                    <span className="font-semibold text-slate-800">PayFlow Direct NPCI Rail</span>
+                    <span className="font-semibold text-slate-800">PayFlow Sandbox</span>
                     <p className="text-[10px] text-slate-400">Zero interchange fee UPI 2.0</p>
                   </div>
                 </label>

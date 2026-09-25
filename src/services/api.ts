@@ -48,7 +48,7 @@ export const MOCK_PAYMENTS: PaymentItem[] = [
       totalOrders: 14
     },
     idempotencyKey: 'idem_98231_payflow_prod_a7x9',
-    settlementProtocol: 'NPCI UPI 2.0 (Direct)',
+    settlementProtocol: 'Provider-confirmed UPI',
     sourceIp: '49.37.112.94',
     location: 'Mumbai, IN'
   },
@@ -80,7 +80,7 @@ export const MOCK_PAYMENTS: PaymentItem[] = [
       totalOrders: 6
     },
     idempotencyKey: 'idem_98230_payflow_prod_b2y1',
-    settlementProtocol: 'NPCI UPI 2.0 (Direct)',
+    settlementProtocol: 'Provider-confirmed UPI',
     sourceIp: '157.34.89.201',
     location: 'Bengaluru, IN'
   },
@@ -174,7 +174,7 @@ export const MOCK_PAYMENTS: PaymentItem[] = [
       totalOrders: 8
     },
     idempotencyKey: 'idem_98175_payflow_prod_e1m5',
-    settlementProtocol: 'NPCI UPI 2.0 (Direct)',
+    settlementProtocol: 'Provider-confirmed UPI',
     sourceIp: '49.36.19.82',
     location: 'Pune, IN'
   }
@@ -215,9 +215,9 @@ export const MOCK_AUDIT_TRAIL: AuditStep[] = [
   {
     id: 'step_5',
     title: 'Customer MPIN Authorization Commenced',
-    service: 'NPCI UPI Switch',
+    service: 'Provider UPI Rail',
     timestamp: '10:21:40.890 IST (+28.4s)',
-    description: 'Customer entered 6-digit MPIN in banking app. NPCI routed debited hold from HDFC Bank to beneficiary clearing settlement pool.'
+    description: "Provider reported that customer authorization completed. PayFlow does not receive or store the customer's UPI PIN."
   },
   {
     id: 'step_6',
@@ -239,7 +239,7 @@ export const MOCK_AUDIT_TRAIL: AuditStep[] = [
     title: 'Transactional Outbox Dispatched Kafka Event',
     service: 'Kafka Cluster',
     timestamp: '10:22:10.004 IST (+889ms)',
-    description: 'Debezium CDC tail published payment.captured to topic payflow.payments.lifecycle.p0.',
+    description: 'OutboxPublisher published payment.captured to topic payflow.payments.lifecycle.p0.',
     codeRef: 'payflow.payments.lifecycle.p0'
   },
   {
@@ -573,7 +573,7 @@ export const MOCK_WEBHOOK_LOGS: WebhookDeliveryLog[] = [
       status: 'failed',
       failureReason: 'INSUFFICIENT_FUNDS',
       method: 'netbanking',
-      provider: 'cashfree'
+      provider: 'sandbox'
     }
   },
   {
@@ -633,7 +633,7 @@ export const MOCK_NODES: ServiceNode[] = [
   {
     id: 'payment_service',
     name: 'Payment Service',
-    fileOrRoute: 'PaymentCore.go',
+    fileOrRoute: 'PaymentService.java',
     status: 'HEALTHY',
     metrics: {
       label1: 'Velocity',
@@ -647,7 +647,7 @@ export const MOCK_NODES: ServiceNode[] = [
   {
     id: 'provider_proxy',
     name: 'Provider Proxy',
-    fileOrRoute: 'Razorpay / NPCI Relay',
+    fileOrRoute: 'Razorpay / provider rail',
     status: 'DEGRADED',
     metrics: {
       label1: 'Success Ratio',

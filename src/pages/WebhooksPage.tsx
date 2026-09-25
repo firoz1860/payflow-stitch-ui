@@ -111,7 +111,7 @@ export const WebhooksPage: React.FC<WebhooksPageProps> = ({ onOpenCreateWebhook 
                     <span className="font-mono text-xs font-semibold text-slate-900">{ep.id}</span>
                   </div>
                   <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium">
-                    {ep.environment}
+                    {ep.environment ?? 'LIVE'}
                   </span>
                 </div>
 
@@ -133,7 +133,7 @@ export const WebhooksPage: React.FC<WebhooksPageProps> = ({ onOpenCreateWebhook 
               </div>
 
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                <span className="text-slate-400 font-mono text-[11px]">Secret: {ep.secret}</span>
+                <span className="text-slate-400 font-mono text-[11px]">Secret: whsec_••••••••••••</span>
                 <button
                   onClick={() => handleSendPing(ep.url)}
                   className="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg font-medium transition-colors flex items-center gap-1 text-[11px]"
@@ -152,7 +152,7 @@ export const WebhooksPage: React.FC<WebhooksPageProps> = ({ onOpenCreateWebhook 
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-slate-900">Recent Webhook Deliveries</h3>
-            <p className="text-xs text-slate-500">Inspecting deliveries from Apache Kafka notification stream</p>
+            <p className="text-xs text-slate-500">Inspecting signed delivery attempts emitted from PayFlow events</p>
           </div>
           <span className="text-xs px-2.5 py-1 bg-slate-100 rounded-full font-mono text-slate-600">
             {logs.length} deliveries tracked
@@ -181,7 +181,7 @@ export const WebhooksPage: React.FC<WebhooksPageProps> = ({ onOpenCreateWebhook 
                   </td>
                   <td className="py-3.5 px-4">
                     <span className="px-2 py-0.5 rounded bg-purple-50 text-purple-700 font-mono text-[11px] font-medium">
-                      {log.eventType}
+                      {log.type}
                     </span>
                   </td>
                   <td className="py-3.5 px-4 text-slate-600 font-mono text-[11px] truncate max-w-[200px]">
@@ -191,7 +191,7 @@ export const WebhooksPage: React.FC<WebhooksPageProps> = ({ onOpenCreateWebhook 
                     <div className="flex items-center gap-1.5">
                       <span
                         className={`w-2 h-2 rounded-full ${
-                          log.status === 'DELIVERED' ? 'bg-emerald-500' : 'bg-rose-500'
+                          log.deliveryStatus === 'DELIVERED' ? 'bg-emerald-500' : 'bg-rose-500'
                         }`}
                       />
                       <span className="font-mono font-semibold text-slate-800">
